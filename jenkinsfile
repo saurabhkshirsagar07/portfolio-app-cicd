@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SSH_CRED = 'node-app-key'               // Jenkins credential ID
-        SERVER_IP = '100.53.194.111'          // Your Deploy EC2 IP
+        SERVER_IP = '172.31.18.155'          // Your Deploy EC2 IP
         REMOTE_USER = 'ubuntu'
         WEB_DIR = '/var/www/html/'
     }
@@ -19,6 +19,9 @@ pipeline {
             steps {
                 sshagent(credentials: ["${SSH_CRED}"]) {
                     sh '''
+                        echo "Creating web directory if not exists..."
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${SERVER_IP} "sudo mkdir -p ${WEB_DIR}"
+
                         echo "Cleaning old files on server..."
                         ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${SERVER_IP} "sudo rm -rf ${WEB_DIR}/*"
 
